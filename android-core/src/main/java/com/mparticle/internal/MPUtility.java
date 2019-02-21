@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -210,6 +211,7 @@ public class MPUtility {
     }
 
 
+    @NonNull
     public static JSONObject getJsonResponse(InputStream is) {
         try {
             StringBuilder responseBuilder = new StringBuilder();
@@ -228,7 +230,7 @@ public class MPUtility {
         } catch (JSONException jse) {
 
         }
-        return null;
+        return new JSONObject();
     }
 
     public static long getDiskSpace(Context context, File path){

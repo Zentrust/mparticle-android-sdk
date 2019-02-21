@@ -2,6 +2,8 @@ package com.mparticle.internal;
 
 import android.content.Context;
 
+import com.mparticle.MParticle;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,6 +42,7 @@ public class InternalSession {
         }catch (JSONException jse){
 
         }
+        MParticle.InternalListener.getListener().onSessionUpdated(this);
     }
 
     public boolean isActive() {
@@ -53,6 +56,7 @@ public class InternalSession {
         mEventCount = 0;
         mTimeInBackground = 0;
         addMpid(ConfigManager.getMpid(context));
+        MParticle.InternalListener.getListener().onSessionUpdated(this);
         return this;
     }
 

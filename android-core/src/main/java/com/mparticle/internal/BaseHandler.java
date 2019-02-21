@@ -5,6 +5,8 @@ import android.os.Looper;
 import android.os.Message;
 
 
+import com.mparticle.MParticle;
+
 import java.util.concurrent.CountDownLatch;
 
 public class BaseHandler extends Handler {
@@ -41,6 +43,9 @@ public class BaseHandler extends Handler {
             if (msg != null && msg.what == -1 && msg.obj instanceof CountDownLatch) {
                 ((CountDownLatch)msg.obj).countDown();
             } else {
+                if (MParticle.InternalListener.hasListener()) {
+                    MParticle.InternalListener.getListener().registerHandlerMessage(getClass().getName(), msg, true);
+                }
                 handleMessageImpl(msg);
             }
         }
@@ -53,6 +58,9 @@ public class BaseHandler extends Handler {
     public boolean sendMessageAtTime(Message msg, long uptimeMillis) {
         if (disabled) {
             return false;
+        }
+        if (MParticle.InternalListener.hasListener()) {
+            MParticle.InternalListener.getListener().registerHandlerMessage(getClass().getName(), msg, false);
         }
         return super.sendMessageAtTime(msg, uptimeMillis);
     }

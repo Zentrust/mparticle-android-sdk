@@ -115,6 +115,7 @@ public class MPEvent {
         setCustomFlags(mpEvent.customFlags);
         entering = mpEvent.entering;
         screenEvent = mpEvent.screenEvent;
+        MParticle.getListener().compositeObject(mpEvent, this);
     }
 
     @Override

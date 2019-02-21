@@ -211,7 +211,9 @@ public class UploadHandler extends BaseHandler implements BackgroundTaskHandler 
                             processingSessionEnd = true;
                         }
                     }
-                    uploadMessage(readyUpload.getId(), readyUpload.getMessage());
+                    String message = readyUpload.getMessage();
+                    MParticle.InternalListener.getListener().compositeObject(readyUpload, message);
+                    uploadMessage(readyUpload.getId(), message);
                 }
             }
         } catch (MParticleApiClientImpl.MPThrottleException e) {

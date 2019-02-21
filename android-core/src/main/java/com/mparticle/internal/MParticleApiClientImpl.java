@@ -150,10 +150,20 @@ public class MParticleApiClientImpl extends MParticleBaseClientImpl implements M
             Logger.verbose("Config request attempt:\n" +
                     "URL- " + mConfigUrl.toString());
 
+            if (MParticle.InternalListener.hasListener()) {
+                MParticle.InternalListener.getListener().onNetworkRequestStarted("Config", connection.getURL().getFile(), new JSONObject());
+            }
+
             makeUrlRequest(Endpoint.CONFIG, connection, true);
 
-            if (connection.getResponseCode() >= 200 && connection.getResponseCode() < 300) {
-                JSONObject response = MPUtility.getJsonResponse(connection);
+            JSONObject response = new JSONObject();
+            int responseCode = connection.getResponseCode();
+            try {
+                response = MPUtility.getJsonResponse(connection);
+                MParticle.InternalListener.getListener().onNetworkRequestFinished(connection.getURL().getFile(), response, responseCode);
+            }
+            catch (Exception ex) {}
+            if (responseCode >= 200 && responseCode < 300) {
                 parseCookies(response);
 
                 Logger.verbose("Config result: \n " +
@@ -252,6 +262,10 @@ public class MParticleApiClientImpl extends MParticleBaseClientImpl implements M
 
         logUpload(message);
 
+        try {
+            MParticle.InternalListener.getListener().onNetworkRequestStarted("Events", connection.getURL().getFile(), new JSONObject(message), message);
+        } catch (Exception e) { }
+
         makeUrlRequest(Endpoint.EVENTS, connection, message, true);
 
         Logger.verbose("Upload request attempt:\n" +
@@ -263,8 +277,8 @@ public class MParticleApiClientImpl extends MParticleBaseClientImpl implements M
 
         if (responseCode >= 200 && responseCode < 300) {
             JSONObject response = MPUtility.getJsonResponse(connection);
-            if (response == null) {
-                response = new JSONObject();
+            if (MParticle.InternalListener.hasListener()) {
+                MParticle.InternalListener.getListener().onNetworkRequestFinished(connection.getURL().getFile(), response, responseCode);
             }
 
             Logger.verbose("Upload result response: \n" +
@@ -273,7 +287,10 @@ public class MParticleApiClientImpl extends MParticleBaseClientImpl implements M
                         "response:\n" + response.toString());
             parseCookies(response);
         } else {
-            Logger.error("Upload request failed- " + connection.getResponseCode() + ": " + connection.getResponseMessage());
+            Logger.error("Upload request failed- " + responseCode + ": " + connection.getResponseMessage());
+            try {
+                MParticle.InternalListener.getListener().onNetworkRequestFinished(connection.getURL().getFile(), new JSONObject().put("message", connection.getResponseMessage()), responseCode);
+            } catch (Exception e) { }
         }
         return connection.getResponseCode();
     }

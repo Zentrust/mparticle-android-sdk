@@ -90,26 +90,31 @@ public class MParticleUserImpl implements MParticleUser {
 
     @Override
     public boolean setUserAttribute(String key, Object value) {
+        MParticle.InternalListener.getListener().onApiCalled(key, value);
         return mUserDelegate.setUserAttribute(key, value, getId());
     }
 
     @Override
     public boolean setUserAttributeList(String key, Object value) {
+        MParticle.InternalListener.getListener().onApiCalled(key, value);
         return mUserDelegate.setUserAttributeList(key, value, getId());
     }
 
     @Override
     public boolean incrementUserAttribute(String key, int value) {
+        MParticle.InternalListener.getListener().onApiCalled(key, value);
         return mUserDelegate.incrementUserAttribute(key, value, getId());
     }
 
     @Override
     public boolean removeUserAttribute(String key) {
+        MParticle.InternalListener.getListener().onApiCalled(key);
         return mUserDelegate.removeUserAttribute(key, getId());
     }
 
     @Override
     public boolean setUserTag(@NonNull String tag) {
+        MParticle.InternalListener.getListener().onApiCalled(tag);
         return setUserAttribute(tag, null);
     }
 
@@ -129,6 +134,7 @@ public class MParticleUserImpl implements MParticleUser {
 
     @Override
     public void setConsentState(ConsentState state) {
+        MParticle.InternalListener.getListener().onApiCalled(state);
         mUserDelegate.setConsentState(state, getId());
     }
 

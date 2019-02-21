@@ -7,11 +7,18 @@ import com.mparticle.internal.CoreCallbacks;
 import com.mparticle.internal.ReportingManager;
 import com.mparticle.kits.KitConfiguration;
 import com.mparticle.kits.KitManagerImpl;
+import com.mparticle.kits.ReportingMessage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mockito.Mockito;
 
 public class MockKitManagerImpl extends KitManagerImpl {
+
+    public MockKitManagerImpl() {
+        this(new MockContext(), Mockito.mock(ReportingManager.class), Mockito.mock(CoreCallbacks.class));
+        Mockito.when(mCoreCallbacks.KitListener()).thenReturn(CoreCallbacks.KitListener.EMPTY);
+    }
 
     public MockKitManagerImpl(Context context, ReportingManager reportingManager, CoreCallbacks coreCallbacks) {
         super(context, reportingManager, coreCallbacks, new BackgroundTaskHandler() {

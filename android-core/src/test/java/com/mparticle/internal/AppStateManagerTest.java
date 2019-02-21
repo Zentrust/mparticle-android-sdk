@@ -7,6 +7,7 @@ import android.os.Handler;
 
 import com.mparticle.MParticle;
 import com.mparticle.media.MPMediaAPI;
+import com.mparticle.MockMParticle;
 import com.mparticle.mock.MockApplication;
 import com.mparticle.mock.MockContext;
 import com.mparticle.mock.MockSharedPreferences;
@@ -44,9 +45,7 @@ public class AppStateManagerTest {
         Mockito.when(configManager.isEnabled()).thenReturn(true);
         messageManager = Mockito.mock(MessageManager.class);
         manager.setMessageManager(messageManager);
-        MParticle mp = Mockito.mock(MParticle.class);
-        Mockito.when(mp.Internal()).thenReturn(Mockito.mock(MParticle.Internal.class));
-        Mockito.when(mp.Internal().getKitManager()).thenReturn(Mockito.mock(KitFrameworkWrapper.class));
+        MParticle mp = new MockMParticle();
         MParticle.setInstance(mp);
 
         manager.delayedBackgroundCheckHandler = Mockito.mock(Handler.class);

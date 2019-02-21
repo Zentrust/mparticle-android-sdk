@@ -674,5 +674,42 @@ public class KitFrameworkWrapper implements KitManager {
         public void replayAndDisableQueue() {
             mKitFrameworkWrapper.replayAndDisableQueue();
         }
+
+        @Override
+        public KitListener KitListener() {
+            return kitListener;
+        }
+
+        private KitListener kitListener = new KitListener() {
+            @Override
+            public void kitFound(int kitId) {
+                MParticle.InternalListener.getListener().kitFound(kitId);
+            }
+
+            @Override
+            public void kitConfigReceived(int kitId, String configuration) {
+                MParticle.InternalListener.getListener().kitConfigReceived(kitId, configuration);
+            }
+
+            @Override
+            public void kitExcluded(int kitId, String reason) {
+                MParticle.InternalListener.getListener().kitExcluded(kitId, reason);
+            }
+
+            @Override
+            public void kitStarted(int kitId) {
+                MParticle.InternalListener.getListener().kitStarted(kitId);
+            }
+
+            @Override
+            public void onKitApiCalled(int kitId, Boolean used, Object... objects) {
+                MParticle.InternalListener.getListener().onKitApiCalled(kitId, used, objects);
+            }
+
+            @Override
+            public void onKitApiCalled(String methodName, int kitId, Boolean used, Object... objects) {
+                MParticle.InternalListener.getListener().onKitApiCalled(methodName, kitId, used, objects);
+            }
+        };
     }
 }

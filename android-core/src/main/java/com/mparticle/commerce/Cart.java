@@ -259,6 +259,7 @@ public final class Cart {
      */
     @NonNull
     public synchronized Cart add(@NonNull Product product) {
+        MParticle.InternalListener.getListener().onApiCalled(product);
         return add(product, true);
     }
 
@@ -277,14 +278,15 @@ public final class Cart {
      */
     @NonNull
     public synchronized Cart add(@NonNull Product product, boolean logEvent) {
+        MParticle.InternalListener.getListener().onApiCalled(product, logEvent);
         if (product != null && productList.size() < MAXIMUM_PRODUCT_COUNT && !productList.contains(product)) {
             product.updateTimeAdded();
             productList.add(product);
             save();
             if (logEvent) {
-                MParticle.getInstance().logEvent(
-                        new CommerceEvent.Builder(Product.ADD_TO_CART, product).build()
-                );
+                CommerceEvent event = new CommerceEvent.Builder(Product.ADD_TO_CART, product).build();
+                MParticle.InternalListener.getListener().compositeObject(product, event);
+                MParticle.getInstance().logEvent(event);
             }
         }
         return this;
@@ -306,9 +308,12 @@ public final class Cart {
                     .checkoutOptions(options)
                     .products(productList)
                     .build();
+            MParticle.InternalListener.getListener().onApiCalled(step, options, event);
             MParticle.getInstance().logEvent(event);
         } else {
             Logger.error("checkout() called but there are no Products in the Cart, no event was logged.");
+            MParticle.InternalListener.getListener().onApiCalled(step, options);
+
         }
     }
 
@@ -320,10 +325,12 @@ public final class Cart {
      *
      */
     public synchronized void checkout() {
+        MParticle.InternalListener.getListener().onApiCalled("checkout");
         if (productList != null && productList.size() > 0) {
             CommerceEvent event = new CommerceEvent.Builder(Product.CHECKOUT, productList.get(0))
                     .products(productList)
                     .build();
+            MParticle.InternalListener.getListener().compositeObject("checkout", event);
             MParticle.getInstance().logEvent(event);
         }else {
             Logger.error("checkout() called but there are no Products in the Cart, no event was logged.");
@@ -341,6 +348,7 @@ public final class Cart {
      * @param attributes the attributes to associate with this purchase
      */
     public void purchase(@NonNull TransactionAttributes attributes) {
+        MParticle.InternalListener.getListener().onApiCalled(attributes);
         purchase(attributes, false);
     }
 
@@ -354,6 +362,7 @@ public final class Cart {
      * @param clearCart boolean determining if the cart should remove its contents after the purchase
      */
     public synchronized void purchase(@NonNull TransactionAttributes attributes, boolean clearCart) {
+        MParticle.InternalListener.getListener().onApiCalled(attributes, clearCart);
         if (productList != null && productList.size() > 0) {
             CommerceEvent event = new CommerceEvent.Builder(Product.PURCHASE, productList.get(0))
                     .products(productList)
@@ -362,6 +371,7 @@ public final class Cart {
             if (clearCart) {
                 clear();
             }
+            MParticle.InternalListener.getListener().compositeObject(attributes, event);
             MParticle.getInstance().logEvent(event);
         }else {
             Logger.error("purchase() called but there are no Products in the Cart, no event was logged.");
@@ -375,6 +385,7 @@ public final class Cart {
      * @param attributes the attributes to associate with this refund. Typically at least the transaction ID is required.
      */
     public void refund(@NonNull TransactionAttributes attributes, boolean clearCart) {
+        MParticle.InternalListener.getListener().onApiCalled(attributes, clearCart);
         if (productList != null && productList.size() > 0) {
             CommerceEvent event = new CommerceEvent.Builder(Product.REFUND, productList.get(0))
                     .products(productList)
@@ -384,6 +395,7 @@ public final class Cart {
                 clear();
             }
             MParticle.getInstance().logEvent(event);
+            MParticle.InternalListener.getListener().compositeObject(attributes, event);
         } else {
             Logger.error("refund() called but there are no Products in the Cart, no event was logged.");
         }

@@ -117,6 +117,7 @@
 
 -keep class com.mparticle.internal.KitManager { *; }
 -keep class com.mparticle.internal.CoreCallbacks { *; }
+-keep class com.mparticle.internal.CoreCallbacks$KitListener { *; }
 -keep class com.mparticle.internal.ReportingManager { *; }
 -keep class com.mparticle.internal.JsonReportingMessage { *; }
 -keep class com.mparticle.internal.MPUtility { *; }
@@ -151,7 +152,10 @@
 -keep class com.mparticle.networking.DomainMapping { *; }
 -keep class com.mparticle.networking.DomainMapping$Builder { *; }
 -keep class com.mparticle.networking.Certificate { *; }
+-keep class com.mparticle.InternalListener { *; }
+-keep class com.mparticle.InternalListener$* { *; }
 
+-keep class com.mparticle.internal.InternalSession { *; }
 
 -keep public class com.mparticle.messaging.* {
      *;

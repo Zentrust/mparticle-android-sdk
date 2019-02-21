@@ -381,6 +381,7 @@ public class  AppStateManager {
         if (MParticle.getInstance() != null) {
             MParticle.getInstance().Internal().getKitManager().onSessionEnd();
         }
+        MParticle.InternalListener.getListener().onSessionUpdated(mCurrentSession);
     }
 
     private void disableLocationTracking() {
